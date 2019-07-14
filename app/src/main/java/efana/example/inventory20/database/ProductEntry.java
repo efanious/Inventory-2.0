@@ -1,6 +1,5 @@
 package efana.example.inventory20.database;
 
-import androidx.core.graphics.drawable.IconCompat;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
@@ -14,16 +13,16 @@ public class ProductEntry {
     @ColumnInfo(name = "product_name")
     private String productName;
     private int quantity;
-    private String price;
+    private int price;
 
     @Ignore
-    public ProductEntry(String productName, int quantity, String price) {
+    public ProductEntry(String productName, int quantity, int price) {
         this.setProductName(productName);
         this.setQuantity(quantity);
         this.setPrice(price);
     }
 
-    public ProductEntry(int id, String productName, int quantity, String price) {
+    public ProductEntry(int id, String productName, int quantity, int price) {
         this.setId(id);
         this.setProductName(productName);
         this.setQuantity(quantity);
@@ -54,11 +53,11 @@ public class ProductEntry {
         this.quantity = quantity;
     }
 
-    public String getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 }
