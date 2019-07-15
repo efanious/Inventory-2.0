@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity implements ProductAdapter.It
                         int position = viewHolder.getAdapterPosition();
                         List<ProductEntry> products = mAdapter.getProducts();
                         mDb.productDao().deleteProduct(products.get(position));
-                        retrieveProducts();
                     }
                 });
             }
@@ -86,27 +85,34 @@ public class MainActivity extends AppCompatActivity implements ProductAdapter.It
         });
 
         mDb = InventoryDatabase.getInstance(getApplicationContext());
-//        retrieveProducts();
+        retrieveProducts();
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        retrieveProducts();
     }
 
     private void retrieveProducts() {
+        final LiveData<List<ProductEntry>> products = mDb.productDao().loadAllProducts();
+        products.observe(this, new Observer<List<ProductEntry>>() {
+            @Override
+            public void onChanged(List<ProductEntry> productEntries) {
+                Log.d(TAG, "Receiving database update from LiveData");
+                mAdapter.setProducts(productEntries);
+            }
+        });
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+            }
+        });
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                final List<ProductEntry> products = mDb.productDao().loadAllProducts();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mAdapter.setProducts(products);
-                    }
-                });
+
             }
         });
     }

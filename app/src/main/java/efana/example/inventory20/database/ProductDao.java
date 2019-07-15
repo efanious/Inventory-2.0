@@ -1,5 +1,6 @@
 package efana.example.inventory20.database;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -13,7 +14,7 @@ import java.util.List;
 public interface ProductDao {
 
     @Query("SELECT * FROM product ORDER BY id")
-    List<ProductEntry> loadAllProducts();
+    LiveData<List<ProductEntry>> loadAllProducts();
 
     @Insert
     void insertProduct(ProductEntry productEntry);
