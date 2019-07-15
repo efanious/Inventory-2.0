@@ -26,6 +26,6 @@ public interface ProductDao {
     void deleteProduct(ProductEntry productEntry);
 
     @Query("SELECT * FROM product WHERE id = :id")
-    ProductEntry loadProductById(int id);
+    LiveData<ProductEntry> loadProductById(int id);
 
 }

@@ -1,9 +1,12 @@
 package efana.example.inventory20;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -65,19 +68,16 @@ public class AddProductActivity extends AppCompatActivity {
             if (mProductId == DEFAULT_PRODUCT_ID) {
                 // populate the UI
                 mProductId = intent.getIntExtra(EXTRA_PRODUCT_ID, DEFAULT_PRODUCT_ID);
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                final LiveData<ProductEntry> product = mDb.productDao().loadProductById(mProductId);
+                product.observe(this, new Observer<ProductEntry>() {
                     @Override
-                    public void run() {
-                        final ProductEntry product = mDb.productDao().loadProductById(mProductId);
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                populateUI(product);
-                            }
-                        });
+                    public void onChanged(ProductEntry productEntry) {
+                        product.removeObserver(this);
+                        Log.d(TAG, "Receiving database update from LiveData");
+                        populateUI(productEntry);
                     }
                 });
+
             }
         }
     }

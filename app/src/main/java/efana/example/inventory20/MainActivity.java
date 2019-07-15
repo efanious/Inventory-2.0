@@ -103,18 +103,7 @@ public class MainActivity extends AppCompatActivity implements ProductAdapter.It
                 mAdapter.setProducts(productEntries);
             }
         });
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
 
-            }
-        });
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        });
     }
 
     @Override
