@@ -64,6 +64,20 @@ public class AddProductActivity extends AppCompatActivity {
             mButton.setText("Update Product");
             if (mProductId == DEFAULT_PRODUCT_ID) {
                 // populate the UI
+                mProductId = intent.getIntExtra(EXTRA_PRODUCT_ID, DEFAULT_PRODUCT_ID);
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        final ProductEntry product = mDb.productDao().loadProductById(mProductId);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                populateUI(product);
+                            }
+                        });
+                    }
+                });
             }
         }
     }
@@ -86,8 +100,8 @@ public class AddProductActivity extends AppCompatActivity {
         }
 
         mProductName.setText(product.getProductName());
-        mQuantity.setText(product.getQuantity());
-        mPrice.setText(product.getPrice());
+        mQuantity.setText(String.valueOf(product.getQuantity()));
+        mPrice.setText(String.valueOf(product.getPrice()));
 
     }
 
@@ -105,9 +119,6 @@ public class AddProductActivity extends AppCompatActivity {
         int quantity = Integer.parseInt(mQuantity.getText().toString());
         int price = Integer.parseInt(mPrice.getText().toString());
 
-        ProductEntry productEntry = new ProductEntry(productName, quantity, price);
-        mDb.productDao().insertProduct(productEntry);
-        finish();
 
         final ProductEntry product = new ProductEntry(productName, quantity, price);
         AppExecutors.getInstance().diskIO().execute(new Runnable() {

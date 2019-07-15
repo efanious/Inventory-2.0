@@ -113,6 +113,8 @@ public class MainActivity extends AppCompatActivity implements ProductAdapter.It
 
     @Override
     public void onItemClickListener(int itemId) {
-
+        Intent intent = new Intent(MainActivity.this, AddProductActivity.class);
+        intent.putExtra(AddProductActivity.EXTRA_PRODUCT_ID, itemId);
+        startActivity(intent);
     }
 }

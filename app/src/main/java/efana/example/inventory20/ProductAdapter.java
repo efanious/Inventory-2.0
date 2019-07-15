@@ -76,7 +76,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         void onItemClickListener(int itemId);
     }
 
-    public class ProductViewHolder extends RecyclerView.ViewHolder {
+    public class ProductViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView productName;
         TextView quantity;
         TextView price;
@@ -86,8 +86,14 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             productName = itemView.findViewById(R.id.productName);
             quantity = itemView.findViewById(R.id.quantity);
             price = itemView.findViewById(R.id.price);
+            itemView.setOnClickListener(this);
 
         }
 
+        @Override
+        public void onClick(View view) {
+            int elementId = mProductEntries.get(getAdapterPosition()).getId();
+            mItemClickListener.onItemClickListener(elementId);
+        }
     }
 }
