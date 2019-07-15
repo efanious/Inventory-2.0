@@ -109,21 +109,21 @@ public class AddProductActivity extends AppCompatActivity {
         mDb.productDao().insertProduct(productEntry);
         finish();
 
-//        final ProductEntry product = new ProductEntry(productName, quantity, price);
-////        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-////            @Override
-////            public void run() {
-////                if (mProductId == DEFAULT_PRODUCT_ID) {
-////                    // insert new product
-////                    mDb.productDao().insertProduct(product);
-////                } else {
-////                    //update product
-////                    product.setId(mProductId);
-////                    mDb.productDao().updateProduct(product);
-////                }
-////                finish();
-////            }
-////        });
+        final ProductEntry product = new ProductEntry(productName, quantity, price);
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (mProductId == DEFAULT_PRODUCT_ID) {
+                    // insert new product
+                    mDb.productDao().insertProduct(product);
+                } else {
+                    //update product
+                    product.setId(mProductId);
+                    mDb.productDao().updateProduct(product);
+                }
+                finish();
+            }
+        });
     }
 
 

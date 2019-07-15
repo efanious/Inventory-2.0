@@ -21,7 +21,7 @@ public abstract class InventoryDatabase extends RoomDatabase {
                 Log.d(LOG_TAG, "Creating a new databse instance");
                 sInstance = Room.databaseBuilder(context.getApplicationContext(),
                         InventoryDatabase.class, InventoryDatabase.DATABASE_NAME)
-                        .allowMainThreadQueries()
+//                        .allowMainThreadQueries()
                         .build();
             }
         }

@@ -10,16 +10,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.List;
+
 import efana.example.inventory20.database.InventoryDatabase;
+import efana.example.inventory20.database.ProductEntry;
 
 import static android.widget.GridLayout.VERTICAL;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ProductAdapter.ItemClickListener {
 
     // Constant for logging
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -42,11 +46,33 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Initialize the adapter and attach it to the RecyclerView
-        mAdapter = new ProductAdapter(this);
+        mAdapter = new ProductAdapter(this, this);
         mRecyclerView.setAdapter(mAdapter);
 
         DividerItemDecoration decoration = new DividerItemDecoration(getApplicationContext(), VERTICAL);
         mRecyclerView.addItemDecoration(decoration);
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            // Called when a user swipes left or right on a ViewHolder
+            @Override
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                // Here is where you'll implement swipe to delete
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        int position = viewHolder.getAdapterPosition();
+                        List<ProductEntry> products = mAdapter.getProducts();
+                        mDb.productDao().deleteProduct(products.get(position));
+                        retrieveProducts();
+                    }
+                });
+            }
+        }).attachToRecyclerView(mRecyclerView);
 
         FloatingActionButton fabButton = findViewById(R.id.fab);
 
@@ -67,20 +93,26 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mAdapter.setProducts(mDb.productDao().loadAllProducts());
+        retrieveProducts();
     }
 
     private void retrieveProducts() {
-//        Log.d(TAG, "Actively retrieving the products from the DataBase");
-//
-//        LiveData<List<ProductEntry>> products = mDb.productDao().loadAllProducts();
-//        // COMPLETED (5) Observe tasks and move the logic from runOnUiThread to onChanged
-//        products.observe(this, new Observer<List<ProductEntry>>() {
-//            @Override
-//            public void onChanged(@Nullable List<ProductEntry> productEntries) {
-//                Log.d(TAG, "Receiving database update from LiveData");
-//                mAdapter.setProducts(productEntries);
-//            }
-//        });
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                final List<ProductEntry> products = mDb.productDao().loadAllProducts();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mAdapter.setProducts(products);
+                    }
+                });
+            }
+        });
+    }
+
+    @Override
+    public void onItemClickListener(int itemId) {
+
     }
 }

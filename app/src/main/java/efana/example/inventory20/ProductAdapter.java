@@ -18,13 +18,17 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     private List<ProductEntry> mProductEntries;
     private Context mContext;
 
+    // Member variable to handle item clicks
+    final private ItemClickListener mItemClickListener;
+
     /**
      * Constructor for the ProductAdapter that initializes the Context.
      *
      * @param context  the current Context
      */
-    public ProductAdapter(Context context) {
+    public ProductAdapter(Context context, ItemClickListener listener) {
         mContext = context;
+        mItemClickListener = listener;
     }
 
     @Override
@@ -66,6 +70,10 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public void setProducts(List<ProductEntry> productEntries) {
         mProductEntries = productEntries;
         notifyDataSetChanged();
+    }
+
+    public interface ItemClickListener {
+        void onItemClickListener(int itemId);
     }
 
     public class ProductViewHolder extends RecyclerView.ViewHolder {
