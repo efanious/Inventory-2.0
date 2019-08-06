@@ -6,7 +6,7 @@ Inventory app for small scale traders. Using SQL to store data with the help of 
 # Screenshots
 
 
-Main Screen           |  Detail Activity               |  Advanced search page
+Main Screen           |  Edit Product             |  Swipe to delete feature
 :-------------------------:|:-------------------------:|:-------------------------:
 ![](screenshots/Screenshot_20190806-084808_Inventory20.jpg) | ![](screenshots/Screenshot_20190806-084832_Inventory20.jpg) | ![](screenshots/Screenshot_20190806-084855_Inventory20.jpg)
 
